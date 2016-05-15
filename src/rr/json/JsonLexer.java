@@ -24,6 +24,10 @@ public class JsonLexer {
         consume();
     }
 
+    /**
+     * Gets the next token in the input
+     * @return The next token
+     */
     public JsonToken getNext() {
         while (lookAhead != EOF) {
             switch (lookAhead) {
@@ -71,6 +75,10 @@ public class JsonLexer {
         return new JsonToken(null, JsonTokenType.EOF);
     }
 
+    /**
+     * Gets a string value from the input
+     * @return The string value
+     */
     private String string() {
         StringBuilder buffer = new StringBuilder();
         while (lookAhead != '"' && lookAhead != EOF) {
@@ -81,6 +89,10 @@ public class JsonLexer {
         return buffer.toString();
     }
 
+    /**
+     * Helper method to get the integer text from the input
+     * @return The string representation of the int in the input.
+     */
     private String intText() {
         StringBuilder buffer = new StringBuilder();
 
@@ -92,10 +104,18 @@ public class JsonLexer {
         return buffer.toString();
     }
 
+    /**
+     * Helper to check if the look ahead is an int character
+     * @return True if the look ahead is an int character
+     */
     private boolean lookAheadIsInt() {
         return lookAhead >= '0' && lookAhead <= '9';
     }
 
+    /**
+     * Builds double from input
+     * @return The double value
+     */
     private double number() {
         StringBuilder buffer = new StringBuilder(intText());
         if (lookAhead == '.') {
