@@ -61,9 +61,10 @@ public class JsonLexer {
                 case '7':
                 case '8':
                 case '9':
+                case '.':
                     return new JsonToken(number(), JsonTokenType.NUMBER);
                 default:
-                    throw new InputMismatchException(String.format("Character: %c at look ahead index %d does not match anything in language", (char)lookAhead, lookAheadIndex));
+                    throw new InputMismatchException(String.format("Character: '%c' at look ahead index %d does not match anything in language.", (char)lookAhead, lookAheadIndex));
             }
         }
 
