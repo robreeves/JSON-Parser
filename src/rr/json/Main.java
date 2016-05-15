@@ -5,12 +5,9 @@ public class Main {
     public static void main(String[] args) {
 	    if (args.length == 1) {
             JsonLexer lexer = new JsonLexer(args[0]);
+            JsonParser parser = new JsonParser(lexer);
 
-            JsonToken token = lexer.getNext();
-            while (token.getType() != JsonTokenType.EOF) {
-                System.out.println(String.format("Type: %s, Value: %s", token.getType(), token.getValue()));
-                token = lexer.getNext();
-            }
+            System.out.println(parser.object());
         }
         else {
             System.err.println("***Invalid input***");
