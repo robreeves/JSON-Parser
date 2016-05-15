@@ -4,6 +4,7 @@ import java.util.InputMismatchException;
 
 /*
 Lexer rules:
+
 LCURL: '{' ;
 RCURL: '}' ;
 COMMA: ',' ;

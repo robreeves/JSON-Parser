@@ -8,11 +8,9 @@ property: STRING ':' value ;
 value: STRING | NUMBER ;
  */
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.InputMismatchException;
 import java.util.List;
-import java.util.stream.Stream;
 
 public class JsonParser {
     private final JsonLexer lexer;
