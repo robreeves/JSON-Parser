@@ -6,6 +6,8 @@ import java.util.InputMismatchException;
 Lexer rules:
 LCURL: '{' ;
 RCURL: '}' ;
+COMMA: ',' ;
+COLON: ':' ;
 NUMBER: [0-9]* '.' [0-9]* ;
 STRING: '"' .* '"' ; //TODO - right now this does not account for special characters
  */
@@ -38,6 +40,12 @@ public class JsonLexer {
                 case '}':
                     matchChar('}');
                     return new JsonToken(null, JsonTokenType.RCURL);
+                case ',':
+                    matchChar(',');
+                    return new JsonToken(null, JsonTokenType.COMMA);
+                case ':':
+                    matchChar(':');
+                    return new JsonToken(null, JsonTokenType.COLON);
                 case '"':
                     matchChar('"');
                     String stringValue = string();
