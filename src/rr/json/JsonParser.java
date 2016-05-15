@@ -5,7 +5,7 @@ Parser rules (ANTLR notation):
 
 object: '{' (property (',' property)*)? '}' ;
 property: STRING ':' value ;
-value: STRING | NUMBER ;
+value: STRING | NUMBER | object ;
  */
 
 import java.util.Arrays;
@@ -48,10 +48,19 @@ public class JsonParser {
         match(JsonTokenType.STRING);
         match(JsonTokenType.COLON);
 
-        JsonToken propertyValue = lookAhead;
-        match(JsonTokenType.STRING, JsonTokenType.NUMBER);
+        JsonProperty property;
+        if (lookAhead.getType() == JsonTokenType.STRING || lookAhead.getType() == JsonTokenType.NUMBER) {
+            //Primitive value
+            JsonToken propertyValue = lookAhead;
+            match(JsonTokenType.STRING, JsonTokenType.NUMBER);
+            property = new JsonProperty((String)propertyName.getValue(), propertyValue.getValue());
+        }
+        else {
+            //Object value
+            property = new JsonProperty((String)propertyName.getValue(), object());
+        }
 
-        return new JsonProperty((String)propertyName.getValue(), propertyValue.getValue());
+        return property;
     }
 
     private void consume() {
