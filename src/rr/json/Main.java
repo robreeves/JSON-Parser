@@ -8,7 +8,7 @@ public class Main {
 
             JsonToken token = lexer.getNext();
             while (token.getType() != JsonTokenType.EOF) {
-                System.out.println(token.getType());
+                System.out.println(String.format("Type: %s, Value: %s", token.getType(), token.getValue()));
                 token = lexer.getNext();
             }
         }

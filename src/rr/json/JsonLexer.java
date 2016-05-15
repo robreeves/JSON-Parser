@@ -7,6 +7,7 @@ Lexer rules:
 LCURL: '{' ;
 RCURL: '}' ;
 NUMBER: [0-9]* '.' [0-9]* ;
+STRING: '"' .* '"' ; //TODO - right now this does not account for special characters
  */
 
 
@@ -37,12 +38,27 @@ public class JsonLexer {
                 case '}':
                     matchChar('}');
                     return new JsonToken(null, JsonTokenType.RCURL);
+                case '"':
+                    matchChar('"');
+                    String stringValue = string();
+                    matchChar('"');
+                    return new JsonToken(stringValue, JsonTokenType.STRING);
                 default:
-                    throw new InputMismatchException(String.format("Character: %c at look ahead index %d does not match anything in language", lookAhead, lookAheadIndex));
+                    throw new InputMismatchException(String.format("Character: %c at look ahead index %d does not match anything in language", (char)lookAhead, lookAheadIndex));
             }
         }
 
         return new JsonToken(null, JsonTokenType.EOF);
+    }
+
+    private String string() {
+        StringBuilder buffer = new StringBuilder();
+        while (lookAhead != '"' && lookAhead != EOF) {
+            buffer.append((char)lookAhead);
+            consume();
+        }
+
+        return buffer.toString();
     }
 
     /**
@@ -70,7 +86,7 @@ public class JsonLexer {
             consume();
         }
         else {
-            throw new InputMismatchException(String.format("Expected character: %c, Actual character: %c, Look ahead index: %d", lookAhead, expected, lookAheadIndex));
+            throw new InputMismatchException(String.format("Expected character: '%c', Actual character: '%c', Look ahead index: %d", (char)expected, (char)lookAhead, lookAheadIndex));
         }
     }
 }
