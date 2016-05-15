@@ -49,15 +49,18 @@ public class JsonParser {
         match(JsonTokenType.COLON);
 
         JsonProperty property;
-        if (lookAhead.getType() == JsonTokenType.STRING || lookAhead.getType() == JsonTokenType.NUMBER) {
-            //Primitive value
-            JsonToken propertyValue = lookAhead;
-            match(JsonTokenType.STRING, JsonTokenType.NUMBER);
-            property = new JsonProperty((String)propertyName.getValue(), propertyValue.getValue());
-        }
-        else {
-            //Object value
-            property = new JsonProperty((String)propertyName.getValue(), object());
+        switch (lookAhead.getType()) {
+            case STRING:
+            case NUMBER:
+                JsonToken propertyValue = lookAhead;
+                match(JsonTokenType.STRING, JsonTokenType.NUMBER);
+                property = new JsonProperty((String)propertyName.getValue(), propertyValue.getValue());
+                break;
+            case LCURL:
+                property = new JsonProperty((String)propertyName.getValue(), object());
+                break;
+            default:
+                throw new InputMismatchException(String.format("Token type: '%s' unexpected", lookAhead.getType()));
         }
 
         return property;
