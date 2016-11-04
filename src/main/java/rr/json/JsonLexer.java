@@ -13,7 +13,7 @@ import java.util.InputMismatchException;
  * STRING: '"' .* '"' ; TODO - right now this does not account for special characters
  *
  */
-public class JsonLexer {
+class JsonLexer {
     private final String input;
     private int lookAheadIndex = -1;
     private int lookAhead;

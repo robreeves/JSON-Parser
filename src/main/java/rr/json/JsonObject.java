@@ -3,7 +3,7 @@ package rr.json;
 import java.util.HashMap;
 import java.util.Map;
 
-public class JsonObject {
+class JsonObject {
     private final Map<String, Object> properties = new HashMap<>();
 
     public void addProperty(String name, Object value) {

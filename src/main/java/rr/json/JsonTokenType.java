@@ -1,6 +1,6 @@
 package rr.json;
 
-public enum JsonTokenType {
+enum JsonTokenType {
     EOF,
     LCURL,
     RCURL,

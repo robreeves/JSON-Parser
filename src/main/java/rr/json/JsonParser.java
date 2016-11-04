@@ -10,7 +10,7 @@ import java.util.List;
  * property: STRING ':' value ;
  * value: STRING | NUMBER | object ;
  */
-public class JsonParser {
+class JsonParser {
     private final JsonLexer lexer;
     private JsonToken lookAhead;
 

@@ -1,6 +1,6 @@
 package rr.json;
 
-public class JsonToken {
+class JsonToken {
     private final Object value;
     private final JsonTokenType type;
 

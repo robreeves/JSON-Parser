@@ -1,6 +1,6 @@
 package rr.json;
 
-public class JsonProperty {
+class JsonProperty {
     private final String name;
     private final Object value;
 
