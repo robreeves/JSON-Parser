@@ -1,5 +1,6 @@
 package rr.json;
 
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.InputMismatchException;
 import java.util.List;
@@ -10,35 +11,45 @@ import java.util.List;
  * property: STRING ':' value ;
  * value: STRING | NUMBER | object ;
  */
-class JsonParser {
+class JsonParser<T> {
     private final JsonLexer lexer;
+    private final Class<T> classType;
     private JsonToken lookAhead;
 
-    public JsonParser(JsonLexer lexer) {
+    public JsonParser(JsonLexer lexer, Class<T> classType) {
         this.lexer = lexer;
+        this.classType = classType;
         lookAhead = lexer.getNext();
     }
 
-    public JsonObject object() {
-        match(JsonTokenType.LCURL);
+    public T object() {
+        T object = null;
 
-        JsonObject jsonObject = new JsonObject();
-        if (lookAhead.getType() != JsonTokenType.RCURL) {
-            //At least one property in JSON object
-            //Get first property
-            JsonProperty property = property();
-            jsonObject.addProperty(property.getName(), property.getValue());
+        try {
+            match(JsonTokenType.LCURL);
+            object = classType.newInstance();
 
-            //Get rest of properties
-            while (lookAhead.getType() == JsonTokenType.COMMA) {
-                match(JsonTokenType.COMMA);
-                property = property();
-                jsonObject.addProperty(property.getName(), property.getValue());
+            if (lookAhead.getType() != JsonTokenType.RCURL) {
+                //At least one property in JSON object
+                //Get first property
+                JsonProperty property = property();
+                setField(object, property);
+
+                //Get rest of properties
+                while (lookAhead.getType() == JsonTokenType.COMMA) {
+                    match(JsonTokenType.COMMA);
+                    property = property();
+                    setField(object, property);
+                }
             }
+
+            match(JsonTokenType.RCURL);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
         }
 
-        match(JsonTokenType.RCURL);
-        return jsonObject;
+        return object;
     }
 
     private JsonProperty property() {
@@ -76,5 +87,10 @@ class JsonParser {
         else {
             throw new InputMismatchException(String.format("Expected token type options: '%s', Actual token type: '%s'", expectedOptions, lookAhead.getType()));
         }
+    }
+
+    private void setField(T object, JsonProperty jsonProperty) throws NoSuchFieldException, IllegalAccessException {
+        Field field = classType.getField(jsonProperty.getName());
+        field.set(object, jsonProperty.getValue());
     }
 }
