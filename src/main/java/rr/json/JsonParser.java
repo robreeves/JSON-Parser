@@ -1,17 +1,15 @@
 package rr.json;
 
-/*
-Parser rules (ANTLR notation):
-
-object: '{' (property (',' property)*)? '}' ;
-property: STRING ':' value ;
-value: STRING | NUMBER | object ;
- */
-
 import java.util.Arrays;
 import java.util.InputMismatchException;
 import java.util.List;
 
+/**
+ * Parser rules (ANTLR notation):
+ * object: '{' (property (',' property)*)? '}' ;
+ * property: STRING ':' value ;
+ * value: STRING | NUMBER | object ;
+ */
 public class JsonParser {
     private final JsonLexer lexer;
     private JsonToken lookAhead;

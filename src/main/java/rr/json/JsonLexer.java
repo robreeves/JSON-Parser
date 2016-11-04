@@ -2,18 +2,17 @@ package rr.json;
 
 import java.util.InputMismatchException;
 
-/*
-Lexer rules:
-
-LCURL: '{' ;
-RCURL: '}' ;
-COMMA: ',' ;
-COLON: ':' ;
-NUMBER: [0-9]* '.' [0-9]* ;
-STRING: '"' .* '"' ; //TODO - right now this does not account for special characters
+/**
+ * Lexer rules:
+ *
+ * LCURL: '{' ;
+ * RCURL: '}' ;
+ * COMMA: ',' ;
+ * COLON: ':' ;
+ * NUMBER: [0-9]* '.' [0-9]* ;
+ * STRING: '"' .* '"' ; TODO - right now this does not account for special characters
+ *
  */
-
-
 public class JsonLexer {
     private final String input;
     private int lookAheadIndex = -1;
