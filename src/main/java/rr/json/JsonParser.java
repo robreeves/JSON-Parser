@@ -6,9 +6,11 @@ import java.util.InputMismatchException;
 import java.util.List;
 
 /**
+ * Parses the input and output the object representation.
+ *
  * Parser rules (ANTLR notation):
  * object: '{' (property (',' property)*)? '}' ;
- * property: STRING ':' value ;
+ * property: STRING ':' value ; //todo allow property names that are not enclosed in quotations.
  * value: STRING | NUMBER | object ;
  */
 class JsonParser<T> {
@@ -22,6 +24,10 @@ class JsonParser<T> {
         lookAhead = lexer.getNext();
     }
 
+    /**
+     * Parses the input.
+     * @return The object representation of the input.
+     */
     public T object() {
         T object = null;
 

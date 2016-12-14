@@ -3,6 +3,8 @@ package rr.json;
 import java.util.InputMismatchException;
 
 /**
+ * Converts the input JSON string into tokens.
+ *
  * Lexer rules:
  *
  * LCURL: '{' ;
@@ -26,7 +28,7 @@ class JsonLexer {
 
     /**
      * Gets the next token in the input
-     * @return The next token
+     * @return The next token.
      */
     public JsonToken getNext() {
         while (lookAhead != EOF) {
