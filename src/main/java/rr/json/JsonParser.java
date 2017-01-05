@@ -14,8 +14,20 @@ import java.util.List;
  * value: STRING | NUMBER | object ;
  */
 class JsonParser<T> {
+
+    /**
+     * The tokenizer for the input JSON string
+     */
     private final JsonLexer lexer;
+
+    /**
+     * The class for the type of Java object to create
+     */
     private final Class<T> classType;
+
+    /**
+     * The next token to process in the input sequence
+     */
     private JsonToken lookAhead;
 
     public JsonParser(JsonLexer lexer, Class<T> classType) {
@@ -26,7 +38,7 @@ class JsonParser<T> {
 
     /**
      * Parses the input.
-     * @return The object representation of the input.
+     * @return The object representation of the input. If the input is invalid, null will be returned.
      */
     public T object() {
         T object = null;
@@ -36,8 +48,8 @@ class JsonParser<T> {
             object = classType.newInstance();
 
             if (lookAhead.getType() != JsonTokenType.RCURL) {
-                //At least one property in JSON object
-                //Get first property
+                //There is at least one property in the JSON object
+                //Get the first property
                 JsonProperty property = property();
                 setField(object, property);
 
@@ -58,6 +70,12 @@ class JsonParser<T> {
         return object;
     }
 
+    /**
+     * Creates a property from the input.
+     * Rule:
+     * property: STRING ':' value ;
+     * @return
+     */
     private JsonProperty property() {
         JsonToken propertyName = lookAhead;
         match(JsonTokenType.STRING);
@@ -67,11 +85,13 @@ class JsonParser<T> {
         switch (lookAhead.getType()) {
             case STRING:
             case NUMBER:
+                //The value is a primitive
                 JsonToken propertyValue = lookAhead;
                 match(JsonTokenType.STRING, JsonTokenType.NUMBER);
                 property = new JsonProperty((String)propertyName.getValue(), propertyValue.getValue());
                 break;
             case LCURL:
+                //The value is an object
                 property = new JsonProperty((String)propertyName.getValue(), object());
                 break;
             default:
@@ -81,10 +101,17 @@ class JsonParser<T> {
         return property;
     }
 
+    /**
+     * Moves the look ahead to the next token in the sequence
+     */
     private void consume() {
         lookAhead = lexer.getNext();
     }
 
+    /**
+     * Matches the look ahead token to verify that it is the expected token type
+     * @param expected
+     */
     private void match(JsonTokenType... expected) {
         List<JsonTokenType> expectedOptions = Arrays.asList(expected);
         if (expectedOptions.contains(lookAhead.getType())) {
@@ -97,6 +124,7 @@ class JsonParser<T> {
 
     private void setField(T object, JsonProperty jsonProperty) throws NoSuchFieldException, IllegalAccessException {
         Field field = classType.getField(jsonProperty.getName());
-        field.set(object, jsonProperty.getValue());
+        Object fieldValue = field.getType().cast(jsonProperty.getValue());
+        field.set(object, fieldValue);
     }
 }
