@@ -50,14 +50,12 @@ class JsonParser {
             if (lookAhead.getType() != JsonTokenType.RCURL) {
                 //There is at least one property in the JSON object
                 //Get the first property
-                JsonProperty property = property();
-                setField(object, property);
+                property(object);
 
                 //Get rest of properties
                 while (lookAhead.getType() == JsonTokenType.COMMA) {
                     match(JsonTokenType.COMMA);
-                    property = property();
-                    setField(object, property);
+                    property(object);
                 }
             }
 
@@ -76,29 +74,31 @@ class JsonParser {
      * property: STRING ':' value ;
      * @return
      */
-    private JsonProperty property() {
-        JsonToken propertyName = lookAhead;
+    private void property(Object outputObj) throws Exception {
+        JsonToken propertyNameToken = lookAhead;
         match(JsonTokenType.STRING);
         match(JsonTokenType.COLON);
 
-        JsonProperty property;
+        Object propertyValue;
         switch (lookAhead.getType()) {
             case STRING:
             case NUMBER:
                 //The value is a primitive
-                JsonToken propertyValue = lookAhead;
+                propertyValue = lookAhead.getValue();
                 match(JsonTokenType.STRING, JsonTokenType.NUMBER);
-                property = new JsonProperty((String)propertyName.getValue(), propertyValue.getValue());
                 break;
             case LCURL:
                 //The value is an object
-                property = new JsonProperty((String)propertyName.getValue(), object());
-                break;
+                //property = new JsonProperty((String)propertyName.getValue(), object());
+                //break;
+                throw new Exception("todo there is a bug here where object() uses the wrong class type");
             default:
                 throw new InputMismatchException(String.format("Token type: '%s' unexpected", lookAhead.getType()));
         }
 
-        return property;
+        Field field = classType.getField((String)propertyNameToken.getValue());
+        Object fieldValue = field.getType().cast(propertyValue);
+        field.set(outputObj, fieldValue);
     }
 
     /**
@@ -120,11 +120,5 @@ class JsonParser {
         else {
             throw new InputMismatchException(String.format("Expected token type options: '%s', Actual token type: '%s'", expectedOptions, lookAhead.getType()));
         }
-    }
-
-    private void setField(Object object, JsonProperty jsonProperty) throws NoSuchFieldException, IllegalAccessException {
-        Field field = classType.getField(jsonProperty.getName());
-        Object fieldValue = field.getType().cast(jsonProperty.getValue());
-        field.set(object, fieldValue);
     }
 }
