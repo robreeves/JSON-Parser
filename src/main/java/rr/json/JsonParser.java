@@ -13,7 +13,7 @@ import java.util.List;
  * property: STRING ':' value ; //todo allow property names that are not enclosed in quotations.
  * value: STRING | NUMBER | object ;
  */
-class JsonParser<T> {
+class JsonParser {
 
     /**
      * The tokenizer for the input JSON string
@@ -23,14 +23,14 @@ class JsonParser<T> {
     /**
      * The class for the type of Java object to create
      */
-    private final Class<T> classType;
+    private final Class<?> classType;
 
     /**
      * The next token to process in the input sequence
      */
     private JsonToken lookAhead;
 
-    public JsonParser(JsonLexer lexer, Class<T> classType) {
+    public JsonParser(JsonLexer lexer, Class<?> classType) {
         this.lexer = lexer;
         this.classType = classType;
         lookAhead = lexer.getNext();
@@ -40,8 +40,8 @@ class JsonParser<T> {
      * Parses the input.
      * @return The object representation of the input. If the input is invalid, null will be returned.
      */
-    public T object() {
-        T object = null;
+    public Object object() {
+        Object object = null;
 
         try {
             match(JsonTokenType.LCURL);
@@ -122,7 +122,7 @@ class JsonParser<T> {
         }
     }
 
-    private void setField(T object, JsonProperty jsonProperty) throws NoSuchFieldException, IllegalAccessException {
+    private void setField(Object object, JsonProperty jsonProperty) throws NoSuchFieldException, IllegalAccessException {
         Field field = classType.getField(jsonProperty.getName());
         Object fieldValue = field.getType().cast(jsonProperty.getValue());
         field.set(object, fieldValue);
