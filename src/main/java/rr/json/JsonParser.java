@@ -80,7 +80,7 @@ class JsonParser {
         match(JsonTokenType.COLON);
 
         Object propertyValue;
-        Field field = classType.getField((String)propertyNameToken.getValue());
+        Field field = classType.getField(propertyNameToken.getValue());
 
         switch (lookAhead.getType()) {
             case STRING:
