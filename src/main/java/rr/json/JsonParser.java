@@ -41,6 +41,10 @@ class JsonParser {
      * @return The object representation of the input. If the input is invalid, null will be returned.
      */
     public Object object() {
+        return object(classType);
+    }
+
+    private Object object(Class<?> classType) {
         Object object = null;
 
         try {
@@ -80,7 +84,7 @@ class JsonParser {
         match(JsonTokenType.COLON);
 
         Object propertyValue;
-        Field field = classType.getField(propertyNameToken.getValue());
+        Field field = outputObj.getClass().getField(propertyNameToken.getValue());
 
         switch (lookAhead.getType()) {
             case STRING:
@@ -94,9 +98,8 @@ class JsonParser {
                 break;
             case LCURL:
                 //The value is an object
-                //property = new JsonProperty((String)propertyName.getValue(), object());
-                //break;
-                throw new Exception("todo there is a bug here where object() uses the wrong class type");
+                propertyValue = object(field.getType());
+                break;
             default:
                 throw new InputMismatchException(String.format("Token type: '%s' unexpected", lookAhead.getType()));
         }
