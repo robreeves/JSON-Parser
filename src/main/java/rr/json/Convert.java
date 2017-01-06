@@ -23,9 +23,6 @@ class Convert {
 
     public static Object toObject(String input, Class<?> inputType) {
 
-        System.out.println(inputType.getTypeName());
-        System.out.println(inputType.getCanonicalName());
-
         Function<String, Object> converter = converters.get(inputType);
         if (converter != null) {
             return converter.apply(input);
