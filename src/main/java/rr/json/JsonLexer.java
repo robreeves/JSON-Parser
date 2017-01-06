@@ -115,18 +115,19 @@ class JsonLexer {
     }
 
     /**
-     * Builds double from input
-     * @return The double value
+     * Extracts the string representation of the numeric value
+     * @return The numeric string
      */
-    private double number() {
+    private String number() {
         StringBuilder buffer = new StringBuilder(intText());
+
         if (lookAhead == '.') {
             consume();
             buffer.append('.');
             buffer.append(intText());
         }
 
-        return Double.parseDouble(buffer.toString());
+        return buffer.toString();
     }
 
     /**

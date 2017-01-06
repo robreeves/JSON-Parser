@@ -80,12 +80,17 @@ class JsonParser {
         match(JsonTokenType.COLON);
 
         Object propertyValue;
+        Field field = classType.getField((String)propertyNameToken.getValue());
+
         switch (lookAhead.getType()) {
             case STRING:
+                propertyValue = lookAhead.getValue();
+                match(JsonTokenType.STRING);
+                break;
             case NUMBER:
                 //The value is a primitive
-                propertyValue = lookAhead.getValue();
-                match(JsonTokenType.STRING, JsonTokenType.NUMBER);
+                propertyValue = Convert.toObject(lookAhead.getValue(), field.getType());
+                match(JsonTokenType.NUMBER);
                 break;
             case LCURL:
                 //The value is an object
@@ -96,9 +101,7 @@ class JsonParser {
                 throw new InputMismatchException(String.format("Token type: '%s' unexpected", lookAhead.getType()));
         }
 
-        Field field = classType.getField((String)propertyNameToken.getValue());
-        Object fieldValue = field.getType().cast(propertyValue);
-        field.set(outputObj, fieldValue);
+        field.set(outputObj, propertyValue);
     }
 
     /**
